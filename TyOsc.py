@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import sys
 sys.path[:0] = ['..']
 import gillespy
+import time
+import itertools
 
 class Tyson2StateOscillator(gillespy.Model):
     """
@@ -16,7 +18,7 @@ class Tyson2StateOscillator(gillespy.Model):
         """
         system_volume = 300 #system volume
         gillespy.Model.__init__(self, name="tyson-2-state", volume=system_volume)
-        self.timespan(np.linspace(0,100,20000))
+        self.timespan(np.linspace(0,100,101))
         # =============================================
         # Define model species, initial values, parameters, and volume
         # =============================================    
@@ -29,13 +31,13 @@ class Tyson2StateOscillator(gillespy.Model):
         # parameter "vol" in order to convert population units to concentration
         # units. Volume here = 300.
 
-        P = gillespy.Parameter(name='P', expression=2.0)
-        kt = gillespy.Parameter(name='kt', expression=20.0)
-        kd = gillespy.Parameter(name='kd', expression=1.0)
-        a0 = gillespy.Parameter(name='a0', expression=0.005)
-        a1 = gillespy.Parameter(name='a1', expression=0.05)
-        a2 = gillespy.Parameter(name='a2', expression=0.1)
-        kdx = gillespy.Parameter(name='kdx', expression=1.0)
+        P = gillespy.Parameter(name='P', expression=parameter_values[0])
+        kt = gillespy.Parameter(name='kt', expression=parameter_values[1])
+        kd = gillespy.Parameter(name='kd', expression=parameter_values[2])
+        a0 = gillespy.Parameter(name='a0', expression=parameter_values[3])
+        a1 = gillespy.Parameter(name='a1', expression=parameter_values[4])
+        a2 = gillespy.Parameter(name='a2', expression=parameter_values[5])
+        kdx = gillespy.Parameter(name='kdx', expression=parameter_values[6])
         self.add_parameter([P, kt, kd, a0, a1, a2, kdx])
         
         # Species
@@ -83,19 +85,79 @@ class Tyson2StateOscillator(gillespy.Model):
 
 
 if __name__ == '__main__':
-
-    tyson_model = Tyson2StateOscillator()
-
-    # =============================================
-    # Simulate the mode and return the trajectories 
-    # =============================================  
-    # To set up the model, first create an empty model object. Then, add
-    # species and parameters as was set up above.
-    tyson_trajectories = tyson_model.run(show_labels=False)
+    """
+    P = gillespy.Parameter(name='P', expression=2.0)
+        kt = gillespy.Parameter(name='kt', expression=20.0)
+        kd = gillespy.Parameter(name='kd', expression=1.0)
+        a0 = gillespy.Parameter(name='a0', expression=0.005)
+        a1 = gillespy.Parameter(name='a1', expression=0.05)
+        a2 = gillespy.Parameter(name='a2', expression=0.1)
+        kdx = gillespy.Parameter(name='kdx', expression=1.0)
+        """
+    """
+    default=[2,20,1,0.005,0.05,0.1,1]
+    for i in range(0, 5):
+        Pvals=np.linspace()
+        """
+    """  
+    comb= [
+        np.linspace(2*0.7,2*1.3,5),
+        np.linspace(20*0.7,20*1.3,5),
+        np.linspace(1*0.7,1*1.3,5),
+        np.linspace(0.005*0.7,0.005*1.3,5),
+        np.linspace(0.05*0.7,0.05*1.3,5),
+        np.linspace(0.1*0.7,0.1*1.3,5),
+        np.linspace(1*0.7,1*1.3,5),
+        ]
+    comblist=[]
+    for combination in itertools.product(*comb):
+        comblist.append(combination)
+        """
+        
+        
+    
+    comb= [
+        np.linspace(0.05*0.7,0.05*1.3,5),
+        np.linspace(0.1*0.7,0.1*1.3,5),
+        np.linspace(1*0.7,1*1.3,5),
+        ]
+    comblist=[]
+    for combination in itertools.product(*comb):
+        tup=(2,20,1,0.005,combination[0],combination[1],combination[2])
+        comblist.append(tup)
+        
+        
+    
+    """
+    Pvals=np.linspace(2*0.7,2*1.3,5)
+    ktvals=np.linspace(20*0.7,20*1.3,5)
+    kdvals=np.linspace(1*0.7,1*1.3,5)
+    a0vals=np.linspace(0.005*0.7,0.005*1.3,5)
+    a1vals=np.linspace(0.05*0.7,0.05*1.3,5)
+    a2vals=np.linspace(0.1*0.7,0.1*1.3,5)
+    kdxvals=np.linspace(1*0.7,1*1.3,5)
+    """
+    
+    #t1=time.time()
+    
+    
+    
+    
+    #set1_model = Tyson2StateOscillator(parameter_values =[Pvals[0],ktvals[0],kdvals[0],a0vals[0],a1vals[0],a2vals[0],kdxvals[0]])
+    #set2_model = parameter_changing_model(parameter_values = set2)
+    data=[]
+    for k in range(0,len(comblist)):
+        tyson_model=Tyson2StateOscillator(parameter_values=comblist[k])
+        tyson_trajectories = tyson_model.run(show_labels=False)
+        data.append([comblist[k],tyson_trajectories[0][:,1]])
+    
+    #ttot=time.time()-t1
+    
     
     # =============================================  
     # plot just the first trajectory, 0, in both time and phase space:
-    # =============================================  
+    # ============================================= 
+    """
     from matplotlib import gridspec
     
     gs = gridspec.GridSpec(1,2)
@@ -118,10 +180,15 @@ if __name__ == '__main__':
     ax1.set_title('Phase-Space Plot')
     
     plt.tight_layout()
-plt.show()# -*- coding: utf-8 -*-
-"""
-Spyder Editor
+    plt.show()
+    """
+    
+    
 
-This is a temporary script file.
-"""
 
+
+#test
+
+#print tyson_trajectories
+#tyson_trajectories[0][19999][3] #first array, second row, third column
+#tyson_trajectories.append(5) #adds an element at the end of the list, doesnt have to be same type
