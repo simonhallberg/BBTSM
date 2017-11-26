@@ -85,20 +85,8 @@ class Tyson2StateOscillator(gillespy.Model):
 
 
 if __name__ == '__main__':
-    """
-    P = gillespy.Parameter(name='P', expression=2.0)
-        kt = gillespy.Parameter(name='kt', expression=20.0)
-        kd = gillespy.Parameter(name='kd', expression=1.0)
-        a0 = gillespy.Parameter(name='a0', expression=0.005)
-        a1 = gillespy.Parameter(name='a1', expression=0.05)
-        a2 = gillespy.Parameter(name='a2', expression=0.1)
-        kdx = gillespy.Parameter(name='kdx', expression=1.0)
-        """
-    """
-    default=[2,20,1,0.005,0.05,0.1,1]
-    for i in range(0, 5):
-        Pvals=np.linspace()
-        """
+    
+    #varying all parameters
     """  
     comb= [
         np.linspace(2*0.7,2*1.3,5),
@@ -115,6 +103,8 @@ if __name__ == '__main__':
         """
         
         
+    #use to generate training data, varying last three parameters
+    """
     
     comb= [
         np.linspace(0.05*0.7,0.05*1.3,5),
@@ -123,8 +113,21 @@ if __name__ == '__main__':
         ]
     comblist=[]
     for combination in itertools.product(*comb):
-        tup=(2,20,1,0.005,combination[0],combination[1],combination[2])
-        comblist.append(tup)
+        vec=[2,20,1,0.005,combination[0],combination[1],combination[2]]
+        comblist.append(vec)
+        """
+    
+    #use to generate test data, varying last three parameters with different increment
+    
+    comb= [
+        np.linspace(0.05*0.7,0.05*1.3,4),
+        np.linspace(0.1*0.7,0.1*1.3,4),
+        np.linspace(1*0.7,1*1.3,4),
+        ]
+    comblist=[]
+    for combination in itertools.product(*comb):
+        vec=[2,20,1,0.005,combination[0],combination[1],combination[2]]
+        comblist.append(vec)
         
         
     
@@ -143,15 +146,37 @@ if __name__ == '__main__':
     
     
     
-    #set1_model = Tyson2StateOscillator(parameter_values =[Pvals[0],ktvals[0],kdvals[0],a0vals[0],a1vals[0],a2vals[0],kdxvals[0]])
-    #set2_model = parameter_changing_model(parameter_values = set2)
+    dataY=[]
     data=[]
     for k in range(0,len(comblist)):
         tyson_model=Tyson2StateOscillator(parameter_values=comblist[k])
         tyson_trajectories = tyson_model.run(show_labels=False)
-        data.append([comblist[k],tyson_trajectories[0][:,1]])
+        data.append(comblist[k])
+        dataY.append(tyson_trajectories[0][:,1])
+        
+    dataY=np.array(dataY)
+    data=np.array(data)
+       
     
     #ttot=time.time()-t1
+    
+    #pickle save training data
+    """
+    
+    import cPickle as pickle
+    pickle.dump( data, open( "savedata.p", "wb" ) )
+    pickle.dump( dataY, open( "savedataY.p", "wb" ) )
+    """
+    
+    #pickle save test data
+    import cPickle as pickle
+    pickle.dump( data, open( "savedatatest.p", "wb" ) )
+    pickle.dump( dataY, open( "savedataYtest.p", "wb" ) )
+    
+    
+    #pickle load
+    #import cPickle as pickle
+    #data = pickle.load( open( "save.p", "rb" ) )
     
     
     # =============================================  
