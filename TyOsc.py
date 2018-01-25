@@ -8,6 +8,8 @@ import gillespy
 import time
 import itertools
 
+t1=time.time()
+
 class Tyson2StateOscillator(gillespy.Model):
     """
     Here, as a test case, we run a simple two-state oscillator (Novak & Tyson 
@@ -17,8 +19,9 @@ class Tyson2StateOscillator(gillespy.Model):
         """
         """
         system_volume = 300 #system volume
-        gillespy.Model.__init__(self, name="tyson-2-state", volume=system_volume)
-        self.timespan(np.linspace(0,100,101))
+        gillespy.Model.__init__(self, name="tyson-2-state",
+                                volume=system_volume)
+        self.timespan(np.linspace(0,100,20000))
         # =============================================
         # Define model species, initial values, parameters, and volume
         # =============================================    
@@ -42,8 +45,10 @@ class Tyson2StateOscillator(gillespy.Model):
         
         # Species
         # Initial values of each species (concentration converted to pop.)
-        X = gillespy.Species(name='X', initial_value=int(0.65609071*system_volume))
-        Y = gillespy.Species(name='Y', initial_value=int(0.85088331*system_volume))
+        X = gillespy.Species(name='X', initial_value=
+                             int(0.65609071*system_volume))
+        Y = gillespy.Species(name='Y', initial_value=
+                             int(0.85088331*system_volume))
         self.add_species([X, Y])
         
         # =============================================  
@@ -78,7 +83,8 @@ class Tyson2StateOscillator(gillespy.Model):
         rxn5 = gillespy.Reaction(name = 'Y nonlin',
                     reactants = {Y:1},
                     products = {},
-                    propensity_function = 'Y/(a0 + a1*(Y/vol)+a2*Y*Y/(vol*vol))')
+                    propensity_function =
+                    'Y/(a0 + a1*(Y/vol)+a2*Y*Y/(vol*vol))')
         
         self.add_reaction([rxn1,rxn2,rxn3,rxn4,rxn5])
 
@@ -104,7 +110,7 @@ if __name__ == '__main__':
         
         
     #use to generate training data, varying last three parameters
-    """
+    
     
     comb= [
         np.linspace(0.05*0.7,0.05*1.3,5),
@@ -115,10 +121,11 @@ if __name__ == '__main__':
     for combination in itertools.product(*comb):
         vec=[2,20,1,0.005,combination[0],combination[1],combination[2]]
         comblist.append(vec)
-        """
+        
     
-    #use to generate test data, varying last three parameters with different increment
-    
+    #use to generate test data,
+    #varying last three parameters with different increment
+    """
     comb= [
         np.linspace(0.05*0.7,0.05*1.3,4),
         np.linspace(0.1*0.7,0.1*1.3,4),
@@ -128,6 +135,7 @@ if __name__ == '__main__':
     for combination in itertools.product(*comb):
         vec=[2,20,1,0.005,combination[0],combination[1],combination[2]]
         comblist.append(vec)
+        """
         
         
     
@@ -156,22 +164,29 @@ if __name__ == '__main__':
         
     dataY=np.array(dataY)
     data=np.array(data)
+    t2=time.time()-t1
        
     
     #ttot=time.time()-t1
     
     #pickle save training data
+    
+    """
+    import cPickle as pickle
+    pickle.dump( data, open( "savedata20k.p", "wb" ) )
+    pickle.dump( dataY, open( "savedataY20k.p", "wb" ) )
     """
     
-    import cPickle as pickle
-    pickle.dump( data, open( "savedata.p", "wb" ) )
-    pickle.dump( dataY, open( "savedataY.p", "wb" ) )
-    """
+    
+    
     
     #pickle save test data
+    """
     import cPickle as pickle
-    pickle.dump( data, open( "savedatatest.p", "wb" ) )
-    pickle.dump( dataY, open( "savedataYtest.p", "wb" ) )
+    pickle.dump( data, open( "savedatatest200.p", "wb" ) )
+    pickle.dump( dataY, open( "savedataYtest200.p", "wb" ) )
+    """
+    
     
     
     #pickle load
@@ -216,4 +231,5 @@ if __name__ == '__main__':
 
 #print tyson_trajectories
 #tyson_trajectories[0][19999][3] #first array, second row, third column
-#tyson_trajectories.append(5) #adds an element at the end of the list, doesnt have to be same type
+#tyson_trajectories.append(5) #adds an element at the end of the list,
+#doesnt have to be same type
